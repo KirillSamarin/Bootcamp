@@ -51,10 +51,10 @@ async def test(message: Message):
             f'{games[0]['title']}\n' + 
             f'{games[0]['discount']}\n' + 
             f'{games[0]['price']}\n' +
-            f'{games[0]['link']}\n'
+            f'[Сылка на игру]({games[0]['link']})'
             )
 
-    await message.answer(text,reply_markup=markup)
+    await message.answer(text,reply_markup=markup,parse_mode='Markdown')
 
 @dp.callback_query(lambda c: c.data.startswith(('butt_')))
 async def to_query(call:types.CallbackQuery):
@@ -80,11 +80,11 @@ async def to_query(call:types.CallbackQuery):
             f'{games[page_number]['title']}\n' + 
             f'{games[page_number]['discount']}\n' + 
             f'{games[page_number]['price']}\n' + 
-            f'{games[page_number]['link']}\n'
+            f'[Сылка на игру]({games[0]['link']})'
             )
 
     #await call.answer('button pressed')
-    await call.message.edit_text(reply_markup=markup,text=text)
+    await call.message.edit_text(reply_markup=markup,text=text,parse_mode='Markdown')
 
 async def main():
     global games 
