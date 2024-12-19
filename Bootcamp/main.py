@@ -42,7 +42,7 @@ async def test(message: Message):
     markup = InlineKeyboardMarkup(inline_keyboard=[
         [
         InlineKeyboardButton(text='←',   callback_data=f'butt_1_-1_0'),
-        InlineKeyboardButton(text=f'1/{len(games)} обновить список',callback_data=f'butt_2_1_0'),
+        InlineKeyboardButton(text=f'1/{len(games)} обновить список',callback_data=f'butt_2_0_0_0'),
         InlineKeyboardButton(text='→',   callback_data=f'butt_3_1_0')
         ]
     ])
@@ -61,22 +61,27 @@ async def to_query(call:types.CallbackQuery):
     global games
 
     data = call.data.split('_') 
-    # butt_direction_(-1 or 1 for left of right)_page_number
+    # butt_direction_(-1 or 1 for left of right)_page_number_(0 or 1 only for middle to prevent same text)
 
     page_number = int(data[3]) + int(data[2]) 
     
-    if data[1] == 'middle': games = find_discounts()
+    if data[1] == 'middle': 
+        games = find_discounts()
+        space = 1 if int(data[4]) == 0 else 0
+    else:
+        space = 0
+    print(space)
     if -1 == page_number or page_number == len(games): return
-    print(0,page_number,len(games))
+
     markup = InlineKeyboardMarkup(inline_keyboard=[
         [
         InlineKeyboardButton(text=f'←',callback_data=f'butt_left_-1_{page_number}'),
-        InlineKeyboardButton(text=f'{page_number+1}/{len(games)} обновить список',callback_data=f'butt_middle_0_{page_number}'),
+        InlineKeyboardButton(text=f'{page_number+1}/{len(games)} обновить список',callback_data=f'butt_middle_0_{page_number}_{space}'),
         InlineKeyboardButton(text=f'→',callback_data=f'butt_right_1_{page_number}')
         ]
     ])
 
-    text = ('Список игр:\n' +
+    text = (f'Список игр:{' ' * space}\n' +
             f'{games[page_number]['title']}\n' + 
             f'{games[page_number]['discount']}\n' + 
             f'{games[page_number]['price']}\n' + 
