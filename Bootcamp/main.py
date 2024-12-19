@@ -80,7 +80,7 @@ async def to_query(call:types.CallbackQuery):
             f'{games[page_number]['title']}\n' + 
             f'{games[page_number]['discount']}\n' + 
             f'{games[page_number]['price']}\n' + 
-            f'[Сылка на игру]({games[0]['link']})'
+            f'[Сылка на игру]({games[page_number]['link']})'
             )
 
     #await call.answer('button pressed')
