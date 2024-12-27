@@ -12,7 +12,7 @@ from aiogram.filters.command import Command , CommandStart
 from discounts_parse import find_discounts
 from repeat_functions import is_desired_game_on_sale
 from set_commands import set_default_commands
-from local_info import IDS , USERS , BOT_TOKEN
+from local_info import AUTHOR_IDS , USERS , BOT_TOKEN
 
 TOKEN = BOT_TOKEN
 
