@@ -71,8 +71,10 @@ async def my_desired(message: Message):
         game_link = message.text.split()[1]
         if game_link in USERS[message.from_user.id]:
             del USERS[message.from_user.id][USERS[message.from_user.id].index(game_link)]
+            await message.answer(f'Успешно удалили игру из списка')
         else:
             USERS[message.from_user.id].append(game_link)
+            await message.answer(f'Успешно добавили игру в список желаемых')
     
     games = find_discounts()
     sale_desired_games = await is_desired_game_on_sale(message,games)
