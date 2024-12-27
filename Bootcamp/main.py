@@ -10,8 +10,9 @@ from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram.filters.command import Command , CommandStart
 from discounts_parse import find_discounts
+from repeat_functions import is_desired_game_on_sale
 from set_commands import set_default_commands
-from local_info import IDS, BOT_TOKEN
+from local_info import IDS , USERS , BOT_TOKEN
 
 TOKEN = BOT_TOKEN
 
@@ -20,6 +21,7 @@ dp = Dispatcher()
 @dp.message(CommandStart())
 async def command_start_handler(message):
     await message.answer("Привет, это бот для стима.")
+    USERS[message.from_user.id] = []
 
 @dp.message(Command("simple_discounts"))
 async def command_discounts(message: Message):
@@ -33,7 +35,11 @@ async def command_discounts(message: Message):
 @dp.message(Command("contact"))
 async def command_discounts(message: Message ):
     if message.text == '/contact':
-        await message.answer('Чтобы передать сообщение создателям бота,\nиспользуйте комманду повторно,\n"/contact {текст которы желаете передать}"')
+        await message.answer("""Чтобы передать сообщение создателям бота,
+Используйте комманду повторно,\n
+"/contact *текст которы желаете передать*"
+        """)
+
     else:
         for author_id in IDS:
             await message.chat.bot.send_message(author_id,f'от:@{message.from_user.username}\n{message.text[9:]}')
@@ -46,8 +52,43 @@ async def ping_pong(message: Message):
         f"pong!\n{ round(time.time() - float(message.date.timestamp()),2) } seconds"
         )
     
+@dp.message(Command("my_desired"))
+async def my_desired(message: Message):
+    global games
+
+    if message.text == '/my_desired':
+        await message.answer(
+            """Чтобы проверить есть ли желаемая игра в списке со скидками
+Илспользуйте комманду повторно "/my_desired"
+Чтобы добавить игру в список желаемых используйте 
+/my_desired /https://store.steampowered.com/app/игра
+
+При попытки добваить одну и ту же игру 2 раза она будет удалена из списка
+Инофрмация обновилась
+        """)
+        
+    elif message.text.startswith('/my_desired https://store.steampowered.com/app/'):
+        game_link = message.text.split()[1]
+        if game_link in USERS[message.from_user.id]:
+            del USERS[message.from_user.id][USERS[message.from_user.id].index(game_link)]
+        else:
+            USERS[message.from_user.id].append(game_link)
+    
+    games = find_discounts()
+    sale_desired_games = await is_desired_game_on_sale(message,games)
+
+    if sale_desired_games:
+        links = [ game['link'] for game in sale_desired_games ]
+        await message.answer(f'Ваши желаемые игры со скидками!\n{'\n'.join(links)}')
+    else:
+        await message.answer(f'Ваши игры не имеют скидки')
+
+        
+
+
+
 @dp.message(Command("discounts"))
-async def test(message: Message):
+async def discounts(message: Message):
     global games
 
     markup = InlineKeyboardMarkup(inline_keyboard=[
