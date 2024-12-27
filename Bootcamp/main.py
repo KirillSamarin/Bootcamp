@@ -41,7 +41,7 @@ async def command_discounts(message: Message ):
         """)
 
     else:
-        for author_id in IDS:
+        for author_id in AUTHOR_IDS:
             await message.chat.bot.send_message(author_id,f'от:@{message.from_user.username}\n{message.text[9:]}')
 
         await message.answer('Ваше сообщение успешно отравлено создателям!')
