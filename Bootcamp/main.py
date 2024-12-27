@@ -99,7 +99,6 @@ async def to_query(call:types.CallbackQuery):
             f'[Сылка на игру]({games[page_number]['link']})'
             )
 
-    #await call.answer('button pressed')
     await call.message.edit_text(reply_markup=markup,text=text,parse_mode='Markdown')
 
 async def main():
