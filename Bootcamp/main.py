@@ -11,8 +11,9 @@ from aiogram.filters import CommandStart
 from aiogram.filters.command import Command , CommandStart
 from discounts_parse import find_discounts
 from set_commands import set_default_commands
+from local_info import IDS, BOT_TOKEN
 
-TOKEN = "TOKEN"
+TOKEN = BOT_TOKEN
 
 dp = Dispatcher()
 
@@ -20,7 +21,7 @@ dp = Dispatcher()
 async def command_start_handler(message):
     await message.answer("Привет, это бот для стима.")
 
-@dp.message(Command("discounts1"))
+@dp.message(Command("simple_discounts"))
 async def command_discounts(message: Message):
     game = find_discounts()[0]
     await message.answer(f"""{game["title"]}
@@ -28,7 +29,17 @@ async def command_discounts(message: Message):
 {game["price"]}
 {game["link"]}
 """)
-    
+
+@dp.message(Command("contact"))
+async def command_discounts(message: Message ):
+    if message.text == '/contact':
+        await message.answer('Чтобы передать сообщение создателям бота,\nиспользуйте комманду повторно,\n"/contact {текст которы желаете передать}"')
+    else:
+        for author_id in IDS:
+            await message.chat.bot.send_message(author_id,f'от:@{message.from_user.username}\n{message.text[9:]}')
+
+        await message.answer('Ваше сообщение успешно отравлено создателям!')
+
 @dp.message(Command("ping"))
 async def ping_pong(message: Message):
     await message.answer(
